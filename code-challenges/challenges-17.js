@@ -15,19 +15,23 @@
 //
 
 const recursionPattern = (int1, int2) => {
-  const helper = (current, result) => {
-    if (current < 0) {
-        result.push(current);
-        return helper(current + int2, result);
+  const helper = (current, decrement, isAdding) => {
+    if (isAdding) {
+      if (current < int1) {
+        return [current, ...helper(current + decrement, decrement, isAdding)];
+      } else {
+        return [current];
+      }
+    } else {
+      if (current >= 0) {
+        return [current, ...helper(current - decrement, decrement, isAdding)];
+      } else {
+        return [current, ...helper(current + decrement, decrement, true)];
+      }
     }
-    result.push(current);
-    if (current !== int1) {
-        return helper(current - int2, result);
-    }
-    return result;
-};
+  };
 
-return helper(int1, []);
+  return helper(int1, int2, false);
   
   };
   
@@ -48,17 +52,12 @@ return helper(int1, []);
 // 
 
 const filterLinks = (str) => {
-  const regex = /<a href="([^"]+?)"?[^>]*>/i;
+  const regex = /<a href="http:\/\/([^"]+?)(\.com|\.org|\.net)"/i;
 
   const match = regex.exec(str);
 
   if (match) {
-    const link = match[1];
-
-    // Handle various TLDs and potential missing quotes
-    if (link.endsWith('.com') || link.endsWith('.org') || link.endsWith('.net')) {
-      return link;
-    }
+    return match[1] + match[2];
   }
 
   return null;
